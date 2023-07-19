@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CustomerApp.Dto;
+using Microsoft.AspNetCore.Mvc;
 using WebApplication2.Models;
 
 namespace WebApplication2.Controllers
@@ -39,12 +40,16 @@ namespace WebApplication2.Controllers
 
         //[POST] localhost:4545/api/customers
         [HttpPost]
-        public ActionResult<Customer> CreateCustomer(Customer customer)
+        public ActionResult<Customer> CreateCustomer(CustomerCreateDto customer)
         {
             try
             {
                 //insert(id, name) values(1, 'Sergio')
-                _context.Customers.Add(customer);
+                var customerMapping = new Customer { 
+                    CustomerName = customer.CustomerName, 
+                    CustomerType = customer.CustomerType 
+                };
+                _context.Customers.Add(customerMapping);
                 //commit
                 _context.SaveChanges();
                 return Ok(customer);

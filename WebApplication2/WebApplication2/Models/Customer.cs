@@ -4,7 +4,7 @@
     {
         public int CustomerId { get; set; }
         public string? CustomerName { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
         public int CustomerType { get; set; }
     }
 }
