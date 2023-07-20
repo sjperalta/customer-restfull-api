@@ -1,4 +1,5 @@
 ﻿using CustomerApp.Dto;
+using CustomerApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication2.Models;
 
@@ -36,6 +37,26 @@ namespace WebApplication2.Controllers
             }
 
             return Ok(customer);
+        }
+
+        ////api/customers/transactions(2)
+        [HttpGet("transactions{id}")]
+        //[Route("[controller]/[action]/trasactions")]
+        public ActionResult<List<Transaction>> GetCustomerTransactions(int id)
+        {
+            //select top 1 a.* from customer a where customerId = id
+            var transactions = _context.Transactions
+                .Where(a => a.CustomerId == id)
+                .ToList();
+
+            var customer = _context.Customers.Find(id);
+            
+            if (!transactions.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(customer?.Transactions.Select(a => new Transaction { CustomerId = a.CustomerId, Amount = a.Amount, Description = a.Description }).ToList());
         }
 
         //[POST] localhost:4545/api/customers
@@ -77,6 +98,7 @@ namespace WebApplication2.Controllers
         public ActionResult DeleteCustomer(int id)
         {
             var customer = _context.Customers.Find(id);
+
             if (customer == null)
             {
                 return NotFound();
