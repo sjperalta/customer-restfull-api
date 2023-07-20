@@ -50,13 +50,40 @@ namespace WebApplication2.Controllers
                 .ToList();
 
             var customer = _context.Customers.Find(id);
-            
+
             if (!transactions.Any())
             {
                 return NotFound();
             }
 
             return Ok(customer?.Transactions.Select(a => new Transaction { CustomerId = a.CustomerId, Amount = a.Amount, Description = a.Description }).ToList());
+        }
+
+        [HttpPost("transactions{id}")]
+        public ActionResult CreateOrUpdateCustomerTransactions(int id, CreateOrUpdateTransactionsDto transactions)
+        {
+            var customer = _context.Customers.Find(id);
+            if(customer == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                var transactionMapping = transactions
+                    .Transactions
+                    .Select(a => new Transaction { Customer = customer, Amount = a.Amount, Description = a.Description, Type = a.Type })
+                    .ToList();
+                customer.Transactions.AddRange(transactionMapping);
+                _context.Update(customer);
+                _context.SaveChanges();
+
+                return NoContent();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         //[POST] localhost:4545/api/customers
