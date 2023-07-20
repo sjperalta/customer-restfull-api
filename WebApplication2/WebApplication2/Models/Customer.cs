@@ -8,6 +8,6 @@ namespace WebApplication2.Models
         public string? CustomerName { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public int CustomerType { get; set; }
-        public List<Transaction> Transactions { get; set; }
+        public List<Transaction> Transactions { get; set; } = new List<Transaction>();
     }
 }
