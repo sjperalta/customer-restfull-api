@@ -1,22 +1,28 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
+# Etapa de construccion, use la imagen base, expone la aplicacion en los puertos 80 y 443
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
+# Etapa restauracion dependencias del proyecto 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["WebApplication2/WebApplication2.csproj", "WebApplication2/"]
-RUN dotnet restore "WebApplication2/WebApplication2.csproj"
+COPY CustomerApp.csproj .
+RUN dotnet restore
+
+# Copia el codigo fuente y construye la aplicacion
 COPY . .
-WORKDIR "/src/WebApplication2"
-RUN dotnet build "WebApplication2.csproj" -c Release -o /app/build
+WORKDIR "/src"
+RUN dotnet build "CustomerApp.csproj" -c Release -o /app/build
 
+# Genera un build en modo release en el folder
 FROM build AS publish
-RUN dotnet publish "WebApplication2.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "CustomerApp.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
+# Inicia la aplicacion
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "WebApplication2.dll"]
+ENTRYPOINT ["dotnet", "CustomerApp.dll"]
