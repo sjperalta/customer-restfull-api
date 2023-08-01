@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CustomerApp.Models;
+using Microsoft.EntityFrameworkCore;
 using WebApplication2.Models;
 
 namespace WebApplication2
@@ -7,5 +8,7 @@ namespace WebApplication2
     {
         public CustomerDbContext(DbContextOptions options) : base(options) { }
         public DbSet<Customer> Customers { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
+
     }
 }
